@@ -10,19 +10,19 @@
 
 class Enigma {
 public:
-    explicit Enigma(std::vector<Rotor> rotors, Reflector reflector, Commutator commutator)
-        : rotors(std::move(rotors)), commutator(std::move(commutator)), reflector(std::move(reflector)) {}
+    explicit Enigma(std::vector<Rotor> rotors, Reflector reflector, Commutator commutator, const char &min_symbol)
+        : rotors(std::move(rotors)), commutator(std::move(commutator)), reflector(std::move(reflector)), min_symbol(min_symbol) {}
 
     std::string encrypt(const std::string &word) {
         std::string output;
 
         for (const char symbol : word) {
             // Apply the commutator
-            char current_symbol = commutator.commutate(symbol - 'A');
+            char current_symbol = commutator.commutate(symbol - min_symbol) - min_symbol;
 
             // Forward pass through the rotors
             for (Rotor &rotor : rotors) {
-                current_symbol = rotor.get_index(current_symbol);
+                current_symbol = rotor.get_index(current_symbol + min_symbol);
             }
 
             // Apply the reflector
@@ -30,14 +30,14 @@ public:
 
             // Reverse pass through the rotors
             for (auto it = rotors.rbegin(); it != rotors.rend(); ++it) {
-                current_symbol = it->get_symbol(current_symbol);
+                current_symbol = it->get_symbol(current_symbol - min_symbol);
             }
 
             // Apply the commutator again
-            current_symbol = commutator.commutate(current_symbol);
+            current_symbol = commutator.commutate(current_symbol - min_symbol);
 
             // Convert back to the character range
-            output.push_back(current_symbol + 'A');
+            output.push_back(current_symbol);
 
             // Rotate the rotors
             rotate_rotors();
@@ -60,6 +60,8 @@ private:
     std::vector<Rotor> rotors;
     Commutator commutator;
     Reflector reflector;
+
+    char min_symbol;
 
     void rotate_rotors() {
         for (auto & rotor : rotors) {

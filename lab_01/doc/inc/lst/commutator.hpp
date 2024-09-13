@@ -11,6 +11,7 @@ public:
     char commutate(const char &symbol) const {
         return symbols[symbol];
     };
+
 private:
     std::vector<char> symbols;
 };

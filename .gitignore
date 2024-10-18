@@ -35,3 +35,12 @@
 .DS_Store
 .idea
 cmake-build-debug
+
+# Tex files
+*.aux
+*.xml
+*.toc
+*.gz
+*.log
+*.bbl
+*.blg

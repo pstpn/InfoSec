@@ -56,16 +56,16 @@ int main() {
     );
 
     // -- MAN --
-    // vector<bitset<64>> blocks {
+    // const vector<bitset<64>> blocks {
     //     bitset<64>(0x4141414141414141),
     //     bitset<64>(0x4141414141414141)
     // };
     //
-    // auto ok = CBF().encrypt(blocks, key, IV);
+    // const auto ok = CBF().encrypt(blocks, key, IV);
     // for (auto block: ok) {
     //     cout << hex << block.to_ullong() << endl;
     // }
-    // auto ko = CBF().decrypt(ok, key, IV);
+    // const auto ko = CBF().decrypt(ok, key, IV);
     // for (auto block: ko) {
     //     cout << hex << block.to_ullong() << endl;
     // }

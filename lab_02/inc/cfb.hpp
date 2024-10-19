@@ -137,7 +137,7 @@ private:
     }
 
     template<size_t N>
-    std::string bitsetToASCII(const std::bitset<N>& b) {
+    static std::string bitsetToASCII(const std::bitset<N>& b) {
         std::string asciiString;
 
         for (int i = N - 1; i >= 0; i -= 8) {
@@ -153,7 +153,7 @@ private:
     }
 
     template<size_t N>
-    std::vector<char> bitsetToBytes(const std::bitset<N>& b) {
+    static std::vector<char> bitsetToBytes(const std::bitset<N>& b) {
         std::vector<char> bytes(N / 8);
 
         for (int i = 0; i < N; ++i)

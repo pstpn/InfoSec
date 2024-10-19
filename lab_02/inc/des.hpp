@@ -13,23 +13,23 @@ typedef bitset<28> bitset28;
 
 class DES {
 public:
-    bitset64 encrypt(bitset64 plaintext, bitset64 key) {
-        vector<bitset48> keys = generate_keys(key);
+    bitset64 encrypt(const bitset64 plaintext, const bitset64 key) {
+        const vector<bitset48> keys = generate_keys(key);
 
-        bitset64 permuted_text = permute<64, 64>(plaintext, initial_permutation, 64);
+        const bitset64 permuted_text = permute<64, 64>(plaintext, initial_permutation, 64);
 
         bitset32 L = (permuted_text >> 32).to_ulong();
         bitset32 R = permuted_text.to_ulong();
 
         for (int i = 0; i < 16; ++i) {
-            bitset32 temp = R;
+            const bitset32 temp = R;
             R = L ^ function_F(R, keys[i]);
             L = temp;
         }
 
-        bitset64 preoutput = (bitset64(R.to_ulong()) << 32) | bitset64(L.to_ulong());
+        const bitset64 pr_out = (bitset64(R.to_ulong()) << 32) | bitset64(L.to_ulong());
 
-        return permute<64, 64>(preoutput, final_permutation, 64);
+        return permute<64, 64>(pr_out, final_permutation, 64);
     }
 private:
     int initial_permutation[64] = {
@@ -155,13 +155,14 @@ private:
     template <size_t InputSize, size_t OutputSize>
     bitset<OutputSize> permute(bitset<InputSize> input, const int* table, int n) {
         bitset<OutputSize> output;
-        for (int i = 0; i < n; ++i) {
+
+        for (int i = 0; i < n; ++i)
             output[n - 1 - i] = input[InputSize - table[i]];
-        }
+
         return output;
     }
 
-    bitset48 expansion(bitset32 input) {
+    bitset48 expansion(bitset32 input) const {
         bitset48 output;
 
         for (int i = 0; i < 48; ++i)
@@ -170,35 +171,35 @@ private:
         return output;
     }
 
-    bitset32 function_F(bitset32 R, bitset48 K) {
-        bitset48 ER = expansion(R);
+    bitset32 function_F(const bitset32 R, const bitset48 K) {
+        const bitset48 ER = expansion(R);
         bitset48 B = ER ^ K;
         bitset32 result;
 
         for (int i = 0; i < 8; ++i) {
-            int row = (B[47 - 6 * i] << 1) | B[47 - 6 * i - 5];
-            int col = (B[47 - 6 * i - 1] << 3) | (B[47 - 6 * i - 2] << 2) | (B[47 - 6 * i - 3] << 1) | B[47 - 6 * i - 4];
-            int sbox_value = S[i][row][col];
+            const int row = (B[47 - 6 * i] << 1) | B[47 - 6 * i - 5];
+            const int col = (B[47 - 6 * i - 1] << 3) | (B[47 - 6 * i - 2] << 2) | (B[47 - 6 * i - 3] << 1) | B[47 - 6 * i - 4];
+            const int s_box_value = S[i][row][col];
 
             for (int j = 0; j < 4; ++j)
-                result[31 - 4 * i - j] = (sbox_value >> j) & 1;
+                result[31 - 4 * i - j] = (s_box_value >> j) & 1;
         }
 
         return permute<32, 32>(result, permutation_P, 32);
     }
 
-    vector<bitset48> generate_keys(bitset64 key) {
+    vector<bitset48> generate_keys(const bitset64 key) {
         vector<bitset48> keys;
-        bitset56 permuted_key = permute<64, 56>(key, gen_keys_g, 56);
+        const bitset56 permuted_key = permute<64, 56>(key, gen_keys_g, 56);
 
         bitset28 C = (permuted_key >> 28).to_ulong();
         bitset28 D = permuted_key.to_ulong();
 
-        for (int i : shift_schedule) {
+        for (const int i : shift_schedule) {
             C = (C << i) | (C >> (28 - i));
             D = (D << i) | (D >> (28 - i));
 
-            bitset56 combined_key = (bitset56(C.to_ulong()) << 28) | bitset56(D.to_ulong());
+            const bitset56 combined_key = (bitset56(C.to_ulong()) << 28) | bitset56(D.to_ulong());
 
             bitset48 round_key = permute<56, 48>(combined_key, gen_keys_h, 48);
             keys.push_back(round_key);
